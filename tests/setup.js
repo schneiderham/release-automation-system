@@ -96,17 +96,17 @@ jest.mock('marked', () => ({
   setOptions: jest.fn()
 }));
 
-jest.mock('cheerio', () => ({
-  load: jest.fn().mockReturnValue({
-    html: jest.fn().mockReturnValue('<mock-html>'),
-    addClass: jest.fn().mockReturnThis(),
-    replaceWith: jest.fn().mockReturnThis(),
-    each: jest.fn().mockImplementation(function(callback) {
-      callback.call(this);
-      return this;
-    })
-  })
-}));
+// jest.mock('cheerio', () => ({
+//   load: jest.fn().mockReturnValue({
+//     html: jest.fn().mockReturnValue('<mock-html>'),
+//     addClass: jest.fn().mockReturnThis(),
+//     replaceWith: jest.fn().mockReturnThis(),
+//     each: jest.fn().mockImplementation(function(callback) {
+//       callback.call(this);
+//       return this;
+//     })
+//   })
+// }));
 
 // Set up test environment variables
 process.env.NODE_ENV = 'test';

@@ -215,6 +215,7 @@ class ContentProcessor {
     const technicalChanges = this.extractTechnicalChangesForEmail();
     const releaseUrl = process.env.RELEASE_URL || '';
     const customerEmails = process.env.CUSTOMER_EMAILS || '';
+    const releaseDate = new Date().toISOString().split('T')[0]; // Current date in YYYY-MM-DD format
 
     // Strip HTML tags for Jira text
     const stripHtml = (html) => {
@@ -233,7 +234,8 @@ Technical Changes: ${technicalChangesText || 'Not specified'}
 📎 Release Package: ${this.generateFileListText()}
 
 🔗 Release Details: ${releaseUrl}
-📧 Customer Email: Sent to ${customerEmails || 'No emails specified'}`;
+📧 Customer Email: Sent to ${customerEmails || 'No emails specified'}
+📅 Release Date: ${releaseDate}`;
   }
 
   /**
