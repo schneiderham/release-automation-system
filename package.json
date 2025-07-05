@@ -1,0 +1,56 @@
+{
+  "name": "release-automation-system",
+  "version": "1.0.0",
+  "description": "GitHub-based customer release management system for Pacific Design Engineering",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:unit": "jest tests/unit-tests/",
+    "test:integration": "jest tests/integration-tests/",
+    "lint": "eslint scripts/",
+    "start": "node scripts/parse-release-data.js"
+  },
+  "keywords": [
+    "github-actions",
+    "release-automation",
+    "gmail-api",
+    "jira-api",
+    "customer-communications"
+  ],
+  "author": "Pacific Design Engineering",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@google-cloud/local-auth": "^2.1.0",
+    "googleapis": "^118.0.0",
+    "axios": "^1.4.0",
+    "nodemailer": "^6.9.3",
+    "marked": "^5.0.0",
+    "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^16.3.1",
+    "yaml": "^2.2.2",
+    "js-yaml": "^4.1.0",
+    "moment": "^2.29.4",
+    "uuid": "^9.0.0",
+    "winston": "^3.9.0",
+    "retry": "^0.13.1"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "eslint": "^8.42.0",
+    "@types/node": "^20.3.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pacificdesignengineering/release-automation-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pacificdesignengineering/release-automation-system/issues"
+  },
+  "homepage": "https://github.com/pacificdesignengineering/release-automation-system#readme"
+} 

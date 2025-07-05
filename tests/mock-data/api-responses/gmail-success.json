@@ -1,0 +1,6 @@
+{
+  "id": "mock-message-id-12345",
+  "threadId": "mock-thread-id-67890",
+  "labelIds": ["SENT"],
+  "snippet": "Release notification sent successfully"
+} 

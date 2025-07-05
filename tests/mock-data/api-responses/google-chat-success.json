@@ -1,0 +1,10 @@
+{
+  "name": "spaces/mock-space-id/messages/mock-message-id",
+  "sender": {
+    "name": "spaces/mock-space-id/members/mock-member-id",
+    "displayName": "Release Automation Bot",
+    "avatarUrl": "https://example.com/avatar.png"
+  },
+  "text": "🚀 Release Automation Complete: Enhanced Assembly Process v2.0",
+  "createTime": "2024-01-15T10:30:00.000Z"
+} 
