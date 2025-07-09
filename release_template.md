@@ -3,6 +3,9 @@
 ## Release Summary
 [Brief summary of the release.]
 
+## Customer Email(s)
+[customer1@example.com, customer2@example.com]
+
 ## Problem Identified
 [Describe the problem or need addressed by this release.]
 
