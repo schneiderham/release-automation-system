@@ -1,0 +1,118 @@
+name: Release Processing
+
+on:
+  release:
+    types: [published]
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  process-release:
+    name: Process Release and Notify Stakeholders
+    runs-on: ubuntu-latest
+    
+    # Only run for non-draft, non-prerelease releases
+    if: github.event.release.draft == false && github.event.release.prerelease == false
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci --only=production
+      
+      - name: Parse release data
+        id: parse-release
+        run: |
+          echo "Parsing release data..."
+          node scripts/parse-release-data.js
+        env:
+          RELEASE_TITLE: ${{ github.event.release.name }}
+          RELEASE_BODY: ${{ github.event.release.body }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
+          RELEASE_ID: ${{ github.event.release.id }}
+      
+      - name: Validate release data
+        id: validate
+        run: |
+          echo "Validating release data..."
+          node scripts/validate-release.js
+        env:
+          CUSTOMER_EMAILS: ${{ steps.parse-release.outputs.customer_emails }}
+          JIRA_TICKETS: ${{ steps.parse-release.outputs.jira_tickets }}
+          RELEASE_TYPE: ${{ steps.parse-release.outputs.release_type }}
+      
+      - name: Update Jira tickets
+        id: update-jira
+        if: steps.validate.outputs.is_valid == 'true' && steps.parse-release.outputs.jira_tickets != ''
+        run: |
+          echo "Updating Jira tickets..."
+          node scripts/update-jira-tickets.js
+        env:
+          JIRA_TICKETS: ${{ steps.parse-release.outputs.jira_tickets }}
+          RELEASE_TITLE: ${{ github.event.release.name }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          BUSINESS_IMPACT: ${{ steps.parse-release.outputs.business_impact }}
+          TECHNICAL_CHANGES: ${{ steps.parse-release.outputs.technical_changes }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+      
+      - name: Send email to PO
+        id: send-email
+        if: steps.validate.outputs.is_valid == 'true'
+        run: |
+          echo "Sending email to Product Owner..."
+          node scripts/send-customer-emails.js
+        env:
+          CUSTOMER_EMAILS: ${{ steps.parse-release.outputs.customer_emails }}
+          RELEASE_TITLE: ${{ github.event.release.name }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
+          DEFAULT_FROM_EMAIL: ${{ secrets.DEFAULT_FROM_EMAIL }}
+      
+      - name: Create summary report
+        id: summary
+        if: always()
+        run: |
+          echo "## Release Processing Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Release:** ${{ github.event.release.name }} (${{ github.event.release.tag_name }})" >> $GITHUB_STEP_SUMMARY
+          echo "**URL:** ${{ github.event.release.html_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Validation Results" >> $GITHUB_STEP_SUMMARY
+          echo "- **Valid:** ${{ steps.validate.outputs.is_valid }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Jira Tickets:** ${{ steps.parse-release.outputs.jira_tickets }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Customer Emails:** ${{ steps.parse-release.outputs.customer_emails }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Processing Results" >> $GITHUB_STEP_SUMMARY
+          echo "- **Jira Update:** ${{ steps.update-jira.outputs.status || 'Skipped' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Email Sent:** ${{ steps.send-email.outputs.status || 'Skipped' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.validate.outputs.is_valid }}" != "true" ]; then
+            echo "❌ **Release validation failed**" >> $GITHUB_STEP_SUMMARY
+            echo "Please check the release format and required fields." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ **Release processed successfully**" >> $GITHUB_STEP_SUMMARY
+          fi
+      
+      - name: Handle failures
+        if: failure()
+        run: |
+          echo "❌ Release processing failed"
+          echo "Please check the workflow logs for detailed error information"
+          echo "Required secrets: JIRA_API_TOKEN, JIRA_USER_EMAIL, JIRA_BASE_URL, GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN, DEFAULT_FROM_EMAIL" 

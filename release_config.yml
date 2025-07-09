@@ -1,0 +1,160 @@
+# Release Automation Configuration
+
+# Product Owner (PO) Configuration
+product_owners:
+  # Default PO for all releases
+  default:
+    email: "po@company.com"
+    name: "Product Owner"
+  
+  # Project-specific POs (optional)
+  projects:
+    project_a:
+      email: "po.projecta@company.com"
+      name: "Project A PO"
+    project_b:
+      email: "po.projectb@company.com"
+      name: "Project B PO"
+
+# Required Fields Validation
+required_fields:
+  - "Release Title"
+  - "Customer Email(s)"
+  - "Issue Summary"
+  - "Resolution"
+  - "Business Impact"
+  - "Technical Changes"
+
+# Optional Fields (will be validated if present)
+optional_fields:
+  - "Related Jira Tickets"
+  - "Files Included"
+  - "Customer Actions Required"
+
+# File Type Validation (Optional - for future server implementation)
+file_validation:
+  enabled: false  # TODO: Implement in server version
+  required_types:
+    - ".pdf"
+    - ".step"
+    - ".stl"
+  optional_types:
+    - ".docx"
+    - ".xlsx"
+    - ".zip"
+
+# Jira Configuration
+jira:
+  # Jira ticket key pattern (e.g., CAST-123)
+  ticket_pattern: "[A-Z]+-\\d+"
+  
+  # Comment template for Jira tickets
+  comment_template: |
+    **Release Update: {release_title}**
+    
+    **Release:** {release_tag}
+    **URL:** {release_url}
+    
+    **Business Impact:**
+    {business_impact}
+    
+    **Technical Changes:**
+    {technical_changes}
+    
+    **Customer Emails:** {customer_emails}
+  
+  # Optional: Auto-transition tickets to "Done" if currently "In Review"
+  auto_transition:
+    enabled: false  # TODO: Implement in server version
+    from_status: "In Review"
+    to_status: "Done"
+
+# Email Configuration
+email:
+  # Email template for PO notifications
+  subject_template: "Release Notification: {release_title}"
+  
+  body_template: |
+    Hello,
+    
+    A new release has been published:
+    
+    **Release:** {release_title} ({release_tag})
+    **URL:** {release_url}
+    
+    **Issue Summary:**
+    {issue_summary}
+    
+    **Resolution:**
+    {resolution}
+    
+    **Business Impact:**
+    {business_impact}
+    
+    **Technical Changes:**
+    {technical_changes}
+    
+    **Jira Tickets:** {jira_tickets}
+    
+    Please review and take any necessary actions.
+    
+    Best regards,
+    Release Automation System
+
+# Feature Flags
+features:
+  # Enable/disable specific features
+  jira_integration: true
+  email_notifications: true
+  file_validation: false  # TODO: Implement in server version
+  auto_transition: false  # TODO: Implement in server version
+  
+  # Logging and monitoring
+  detailed_logging: true
+  summary_report: true
+  failure_notifications: true
+
+# Validation Rules
+validation:
+  # Minimum content length for required sections
+  min_content_length:
+    issue_summary: 10
+    resolution: 20
+    business_impact: 15
+    technical_changes: 15
+  
+  # Maximum content length (optional)
+  max_content_length:
+    issue_summary: 500
+    resolution: 2000
+    business_impact: 1000
+    technical_changes: 2000
+
+# Error Handling
+error_handling:
+  # Continue processing other steps if one fails
+  continue_on_error: true
+  
+  # Retry configuration for external services
+  retry:
+    max_attempts: 3
+    delay_seconds: 5
+  
+  # Notification settings for failures
+  notify_on_failure: true
+  create_issue_on_failure: true
+
+# Security
+security:
+  # Mask sensitive data in logs
+  mask_sensitive_data: true
+  
+  # Allowed email domains (optional)
+  allowed_email_domains:
+    - "company.com"
+    - "customer.com"
+  
+  # Rate limiting (TODO: Implement in server version)
+  rate_limiting:
+    enabled: false
+    max_requests_per_minute: 60 
