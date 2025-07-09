@@ -52,6 +52,24 @@ jobs:
           JIRA_TICKETS: ${{ steps.parse-release.outputs.jira_tickets }}
           RELEASE_TYPE: ${{ steps.parse-release.outputs.release_type }}
 
+      - name: Send PO release email
+        id: send-po-email
+        if: steps.validate.outputs.is_valid == 'true'
+        run: |
+          echo "Sending PO release email..."
+          node scripts/send_po_release_email.js && echo "PO release email sent successfully." || echo "Failed to send PO release email."
+        env:
+          GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
+          DEFAULT_FROM_EMAIL: ${{ secrets.DEFAULT_FROM_EMAIL }}
+          RELEASE_TITLE: ${{ github.event.release.name }}
+          RELEASE_BODY: ${{ github.event.release.body }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
+          RELEASE_TYPE: ${{ steps.parse-release.outputs.release_type }}
+          PROJECT_NAME: ${{ steps.parse-release.outputs.project_name }}
+
       - name: Post release comment in Jira
         id: jira-release-comment
         if: steps.validate.outputs.is_valid == 'true' && steps.parse-release.outputs.jira_tickets != ''
@@ -117,6 +135,7 @@ jobs:
           echo "- **Customer Emails:** ${{ steps.parse-release.outputs.customer_emails }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Processing Results" >> $GITHUB_STEP_SUMMARY
+          echo "- **PO Release Email:** ${{ steps.send-po-email.outcome }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Jira Release Comment:** ${{ steps.jira-release-comment.outcome }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Jira Update:** ${{ steps.update-jira.outputs.status || 'Skipped' }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Email Sent:** ${{ steps.send-email.outputs.status || 'Skipped' }}" >> $GITHUB_STEP_SUMMARY
