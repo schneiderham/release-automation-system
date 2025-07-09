@@ -12,6 +12,12 @@
 ## Resolution Description
 [updated template.]
 
+## Business Impact
+[Better release management]
+
+## Technical Changes
+[Mostly Mat]
+
 ## Files Included
 - [ ] Updated drawings (PDF)
 - [ ] 3D models (STEP/SolidWorks)

@@ -335,3 +335,38 @@ describe('ReleaseValidator', () => {
     });
   });
 }); 
+
+describe('Template Validation', () => {
+  it('should pass validation for the current release_template.md', () => {
+    const templatePath = path.resolve(__dirname, '../../release_template.md');
+    const templateBody = fs.readFileSync(templatePath, 'utf8');
+    process.env.RELEASE_BODY = templateBody;
+    process.env.CUSTOMER_EMAILS = 'test@example.com';
+    process.env.RELEASE_TYPE = 'major';
+
+    validator = new ReleaseValidator();
+    const result = validator.validate();
+
+    expect(result.isValid).toBe(true);
+  });
+}); 
+
+describe('Manual Test File Validation', () => {
+  it('should pass validation for test-release-body.txt', () => {
+    const testFilePath = path.resolve(__dirname, '../../test-release-body.txt');
+    if (!fs.existsSync(testFilePath)) {
+      // If the file doesn't exist, skip the test
+      console.warn('test-release-body.txt not found, skipping manual test file validation.');
+      return;
+    }
+    const testBody = fs.readFileSync(testFilePath, 'utf8');
+    process.env.RELEASE_BODY = testBody;
+    process.env.CUSTOMER_EMAILS = 'test@example.com';
+    process.env.RELEASE_TYPE = 'major';
+
+    validator = new ReleaseValidator();
+    const result = validator.validate();
+
+    expect(result.isValid).toBe(true);
+  });
+}); 
