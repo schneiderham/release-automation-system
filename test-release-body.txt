@@ -1,0 +1,28 @@
+# Release Template
+
+## Release Summary
+[Test git automation trigger.]
+
+## Customer Email(s)
+**Customer Email(s):** schneider@pde.com
+
+## Problem Identified
+[missing email in release]
+
+## Resolution Description
+[updated template.]
+
+## Files Included
+- [ ] Updated drawings (PDF)
+- [ ] 3D models (STEP/SolidWorks)
+- [ ] Documentation updates
+- [ ] Test results
+- [ ] Assembly instructions
+- [ ] Bill of materials
+- [ ] Quality control reports
+- [ x] Other: [none]
+
+## Jira Tickets Referenced
+[PDE-1]
+
+**PO Notification:** [yes] 

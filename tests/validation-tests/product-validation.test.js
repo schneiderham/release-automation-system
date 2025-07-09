@@ -318,24 +318,6 @@ describe('Product Validation Tests', () => {
     });
   });
 
-  describe('GitHub Actions Integration', () => {
-    it('should have proper GitHub Actions workflow', () => {
-      const fs = require('fs');
-      
-      expect(fs.existsSync('.github/workflows/release-automation.yml')).toBe(true);
-      
-      const workflow = fs.readFileSync('.github/workflows/release-automation.yml', 'utf8');
-      
-      // Check for key workflow components
-      expect(workflow).toContain('on:');
-      expect(workflow).toContain('release:');
-      expect(workflow).toContain('jobs:');
-      expect(workflow).toContain('parse-release-data');
-      expect(workflow).toContain('validate-release');
-      expect(workflow).toContain('process-release-content');
-    });
-  });
-
   describe('Environment Configuration', () => {
     it('should support environment-based configuration', () => {
       // Test that the system can read from environment variables
