@@ -141,17 +141,6 @@ jobs:
           DRIVE_STATUS: ${{ steps.sync-drive.outputs.status }}
           CUSTOMER_EMAILS: ${{ steps.parse-release.outputs.customer_emails }}
           JIRA_TICKETS: ${{ steps.parse-release.outputs.jira_tickets }}
-      
-      - name: Handle failures
-        if: failure()
-        run: |
-          echo "Workflow failed - sending alert..."
-          node scripts/handle-failure.js
-        env:
-          RELEASE_TITLE: ${{ github.event.release.name }}
-          RELEASE_URL: ${{ github.event.release.html_url }}
-          GOOGLE_CHAT_WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
-          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
 
   # Optional: Create GitHub issue for failed releases
   create-failure-issue:
