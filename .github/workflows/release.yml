@@ -145,11 +145,4 @@ jobs:
             echo "Please check the release format and required fields." >> $GITHUB_STEP_SUMMARY
           else
             echo "✅ **Release processed successfully**" >> $GITHUB_STEP_SUMMARY
-          fi
-      
-      - name: Handle failures
-        if: failure()
-        run: |
-          echo "❌ Release processing failed"
-          echo "Please check the workflow logs for detailed error information"
-          echo "Required secrets: JIRA_API_TOKEN, JIRA_USER_EMAIL, JIRA_BASE_URL, GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN, DEFAULT_FROM_EMAIL" 
+          fi 
