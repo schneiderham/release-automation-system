@@ -51,6 +51,7 @@ jobs:
           CUSTOMER_EMAILS: ${{ steps.parse-release.outputs.customer_emails }}
           JIRA_TICKETS: ${{ steps.parse-release.outputs.jira_tickets }}
           RELEASE_TYPE: ${{ steps.parse-release.outputs.release_type }}
+          RELEASE_BODY: ${{ github.event.release.body }}
 
       - name: Send PO release email
         id: send-po-email
