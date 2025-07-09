@@ -71,39 +71,41 @@ jobs:
           RELEASE_TYPE: ${{ steps.parse-release.outputs.release_type }}
           PROJECT_NAME: ${{ steps.parse-release.outputs.project_name }}
 
-      - name: Post release comment in Jira
-        id: jira-release-comment
-        if: steps.validate.outputs.is_valid == 'true' && steps.parse-release.outputs.jira_tickets != ''
-        run: |
-          echo "Posting release comment in Jira..."
-          node scripts/jira_release_update.js && echo "Jira release comment posted successfully." || echo "Failed to post Jira release comment."
-        env:
-          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
-          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
-          RELEASE_TITLE: ${{ github.event.release.name }}
-          RELEASE_URL: ${{ github.event.release.html_url }}
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-          RELEASE_BODY: ${{ github.event.release.body }}
-          RELEASE_AUTHOR: ${{ github.event.release.author.login }}
-          FILE_MANIFEST: ${{ steps.parse-release.outputs.file_manifest }}
+      # TODO: Enable this step when ready to use Jira API for custom comments/automation
+      # - name: Post release comment in Jira
+      #   id: jira-release-comment
+      #   if: steps.validate.outputs.is_valid == 'true' && steps.parse-release.outputs.jira_tickets != ''
+      #   run: |
+      #     echo "Posting release comment in Jira..."
+      #     node scripts/jira_release_update.js && echo "Jira release comment posted successfully." || echo "Failed to post Jira release comment."
+      #   env:
+      #     JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      #     JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+      #     JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+      #     RELEASE_TITLE: ${{ github.event.release.name }}
+      #     RELEASE_URL: ${{ github.event.release.html_url }}
+      #     RELEASE_TAG: ${{ github.event.release.tag_name }}
+      #     RELEASE_BODY: ${{ github.event.release.body }}
+      #     RELEASE_AUTHOR: ${{ github.event.release.author.login }}
+      #     FILE_MANIFEST: ${{ steps.parse-release.outputs.file_manifest }}
 
-      - name: Update Jira tickets
-        id: update-jira
-        if: steps.validate.outputs.is_valid == 'true' && steps.parse-release.outputs.jira_tickets != ''
-        run: |
-          echo "Updating Jira tickets..."
-          node scripts/update-jira-tickets.js
-        env:
-          JIRA_TICKETS: ${{ steps.parse-release.outputs.jira_tickets }}
-          RELEASE_TITLE: ${{ github.event.release.name }}
-          RELEASE_URL: ${{ github.event.release.html_url }}
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-          BUSINESS_IMPACT: ${{ steps.parse-release.outputs.business_impact }}
-          TECHNICAL_CHANGES: ${{ steps.parse-release.outputs.technical_changes }}
-          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
-          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+      # TODO: Enable this step when ready to use Jira API for ticket updates/automation
+      # - name: Update Jira tickets
+      #   id: update-jira
+      #   if: steps.validate.outputs.is_valid == 'true' && steps.parse-release.outputs.jira_tickets != ''
+      #   run: |
+      #     echo "Updating Jira tickets..."
+      #     node scripts/update-jira-tickets.js
+      #   env:
+      #     JIRA_TICKETS: ${{ steps.parse-release.outputs.jira_tickets }}
+      #     RELEASE_TITLE: ${{ github.event.release.name }}
+      #     RELEASE_URL: ${{ github.event.release.html_url }}
+      #     RELEASE_TAG: ${{ github.event.release.tag_name }}
+      #     BUSINESS_IMPACT: ${{ steps.parse-release.outputs.business_impact }}
+      #     TECHNICAL_CHANGES: ${{ steps.parse-release.outputs.technical_changes }}
+      #     JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      #     JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+      #     JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
       
       - name: Send email to PO
         id: send-email
